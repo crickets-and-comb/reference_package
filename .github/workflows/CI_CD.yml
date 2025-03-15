@@ -4,8 +4,6 @@ on:
   schedule:
     - cron: "0 1 * * 0" # Weekly on Sunday at 1:00 a.m.
 
-  pull_request_target:
-
   push:
     branches:
       - main
@@ -16,6 +14,13 @@ on:
         description: 'Python version to build with. Does not set matrix for QC and testing; just sets version for build jobs.'
         type: string
         default: "3.12"
+      TEST_OR_PROD:
+        description: 'Publish to test or prod? Default ("dev") skips publishing except on push to main, which publishes to test.'
+        type: string
+        default: 'dev'
+
+  workflow_call:
+    inputs:
       TEST_OR_PROD:
         description: 'Publish to test or prod? Default ("dev") skips publishing except on push to main, which publishes to test.'
         type: string
