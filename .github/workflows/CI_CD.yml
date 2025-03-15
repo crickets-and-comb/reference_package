@@ -25,6 +25,11 @@ on:
         description: 'Publish to test or prod? Default ("dev") skips publishing except on push to main, which publishes to test.'
         type: string
         default: 'dev'
+    secrets:
+      CHECKOUT_SHARED:
+        required: true
+      SAFETY_API_KEY:
+        required: true
 
 defaults:
   run:
