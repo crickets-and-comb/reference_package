@@ -14,6 +14,7 @@ on:
         description: 'Which published version to test? PyPi (prod) or TestPyPi (test)?'
         type: string
         default: 'test'
+  # TODO: Make a workflow_call block, and call this from CI_CD.
 
 defaults:
   run:
