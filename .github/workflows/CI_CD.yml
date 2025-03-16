@@ -26,6 +26,8 @@ on:
         type: string
         default: 'dev'
     secrets:
+      ACTIONS_DEPLOY_KEY:
+        required: true
       CHECKOUT_SHARED:
         required: true
       SAFETY_API_KEY:
