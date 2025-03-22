@@ -7,7 +7,6 @@ on:
         description: 'Python version to build with.'
         type: string
         default: "3.12"
-  # TODO: Make a workflow_call block, and call this from CI_CD. 
 
 defaults:
   run:
