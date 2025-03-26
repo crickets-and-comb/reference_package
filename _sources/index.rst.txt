@@ -6,6 +6,8 @@ Includes typical CLI and library setup. To include service app setup at some poi
 
 See also the GitHub repository: https://github.com/crickets-and-comb/reference_package
 
+This is a `Crickets and Comb <https://cricketsandcomb.org>`_ resource.
+
 Contents
 --------
 
