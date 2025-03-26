@@ -1,8 +1,8 @@
 # Basic package template
 
-## Summary
-
 Just a basic package template. See the docs: https://crickets-and-comb.github.io/reference_package/.
+
+This is a [Crickets and Comb](https://cricketsandcomb.org) resource.
 
 ## Structure
 
