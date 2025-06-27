@@ -41,8 +41,8 @@ Unless you're developing, avoid importing directly from library, like `from refe
 Try the example CLI:
 
 ```bash
-    $ python -m example
-    $ python -m example --seconds 2
+    $ example
+    $ example --seconds 2
 ```
 
 ## Dev workflow
