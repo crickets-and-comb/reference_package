@@ -6,7 +6,7 @@ This is a [Crickets and Comb](https://cricketsandcomb.org) resource.
 
 ## Structure
 
-```bash
+```
     .github/workflows               GitHub Actions CI/CD workflows.
     docs                            RST docs and doc build staging.
     Makefile                        Dev tools and params. (includes shared/Makefile)
@@ -24,7 +24,9 @@ This is a [Crickets and Comb](https://cricketsandcomb.org) resource.
 
 To install the package, run:
 
+```bash
   $ pip install reference_package
+```
 
 See https://pypi.org/project/reference-package/.
 
@@ -38,14 +40,18 @@ Unless you're developing, avoid importing directly from library, like `from refe
 
 Try the example CLI:
 
-    $ python -m example
-    $ python -m example --seconds 2
+```bash
+    $ example
+    $ example --seconds 2
+```
 
 ## Dev workflow
 
-There are a number of dev tools in the `Makefile`. You can list all the make tools you might want to use:
+There are a number of dev tools in the `Makefile`. Once you set up the shared tools Git submodule (below), you can list all the make tools you might want to use:
 
+```bash
     $ make list-makes
+```
 
 Go check them out in `Makefile`.
 
@@ -69,13 +75,17 @@ You can override shared make targets or add new targets that aren't in the share
 
 Once you've set up the shared dev tools submodule, you'll want to periodically update it to get updates to the shared tools:
 
+```bash
   $ git submodule update --remote --merge
+```
 
 This will update all Git submodules. To be more specific to shared, and perhaps more easy to remember, simple navigate into the shared subdirectory and pull:
 
+```bash
   $ cd shared
   $ git checkout main
   $ git pull
+```
 
 Either way will pull the latest commit on the submodule's remote. Note that, while you'll be able to run with this updated shared submodule, you'll still want to commit that update to your consuming repo to track that update. After updating, you'll see an unstaged change in the submodule's commit hash that the consuming repo tracks:
 
@@ -117,14 +127,18 @@ You'll want this package's site-package files to be the source files in this rep
 
 First build and activate the env before installing this package:
 
+```bash
     $ make build-env
     $ conda activate reference_package_py3.12
+```
 
 Note, if you don't have Python installed, you need to pass the package name directly when you build the env: `make build-env PACKAGE_NAME=reference_package`. If you have Python installed (e.g., this conda env already activated), then you don't need to because it uses Python to grab the package name from the `setup.cfg` file.
 
 Then, install this package and its dev dependencies:
 
+```bash
     $ make install
+```
 
 This installs all the dependencies in your conda env site-packages, but the files for this package's installation are now your source files in this repo.
 
@@ -134,11 +148,15 @@ Note: Running `make install` is equivalent to running `make install INSTALL_EXTR
 
 Before pushing commits, you'll usually want to rebuild the env and run all the QC and testing:
 
+```bash
     $ make clean format full
+```
 
 When making smaller commits, you might just want to run some of the smaller commands:
 
+```bash
     $ make clean format full-qc full-test
+```
 
 ### Workflows: usage and limitations
 
@@ -166,13 +184,17 @@ When developing the workflows themselves, you'll want to try them out locally be
 
 You can use a make target for that:
 
+```bash
   $ make run-act
+```
 
 That will run `.github/workflows/CI_CD.yml`. But, you can also run any workflow you'd like by using `act` directly. See https://nektosact.com.
 
 To use this tool, you'll need to have Docker installed and running on your machine: https://www.docker.com/. You'll also need to install `act` in your terminal:
 
+```bash
   $ brew install act
+```
 
 Additionally, you'll need to change the URLs in the calling workflows that refer to the shared workflows. `act` looks at your local files and does not follow the GitHub URL. It will fail when it tries to find the shared workflow. So, you need to point it to the local submodule. For instance, if you're calling this:
 
