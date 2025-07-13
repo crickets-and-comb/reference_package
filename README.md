@@ -160,7 +160,7 @@ When making smaller commits, you might just want to run some of the smaller comm
 
 ### Workflows: usage and limitations
 
-Using the workflows found in `.github/workflows`, QC, tests, builds, and deployment run on GitHub on certain events (e.g., pull requests, pushes to main, manual dispatches).
+QC, tests, builds, and deployment run on GitHub on certain events (e.g., pull requests, pushes to main, manual dispatches) using the workflows found in `.github/workflows`.
 
 The shared workflows (in the shared submodule at `shared/.github/workflows`) are reusable workflows, meaning they can can be called from within other workflows. See https://docs.github.com/en/actions/sharing-automations/reusing-workflows.
 
