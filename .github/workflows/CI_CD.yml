@@ -14,6 +14,11 @@ on:
         description: 'Python version to build with. Does not set matrix for QC and testing; just sets version for build jobs.'
         type: string
         default: "3.12"
+      REF_TO_CHECKOUT:
+        description: "The git ref to checkout."
+        required: false
+        default: "refs/heads/main"
+        type: string
       TEST_OR_PROD:
         description: 'Publish to test or prod? Default ("dev") skips publishing except on push to main, which publishes to test.'
         type: string
@@ -21,6 +26,11 @@ on:
 
   workflow_call:
     inputs:
+      REF_TO_CHECKOUT:
+        description: "The git ref to checkout."
+        required: false
+        default: "refs/heads/main"
+        type: string
       TEST_OR_PROD:
         description: 'Publish to test or prod? Default ("dev") skips publishing except on push to main, which publishes to test.'
         type: string
@@ -41,60 +51,81 @@ env:
   CONDA_VERSION: latest
   PACKAGE_TEST_WAIT_TIME: 120
   PYTHON_BUILD_VERSION_DEFAULT: "3.12"
+  REF_TO_CHECKOUT_DEFAULT: "refs/heads/main"
 
 jobs:
-  set-inputs:
-    name: Set Inputs
+  validate-and-set-inputs:
+    name: Validate and Set Inputs
     runs-on: ubuntu-latest
     outputs:
       PYTHON_BUILD_VERSION: ${{ steps.set-python-version.outputs.PYTHON_BUILD_VERSION }}
+      REF_TO_CHECKOUT: ${{ steps.validate-ref.outputs.REF_TO_CHECKOUT }}
       TEST_OR_PROD: ${{ steps.set-test.outputs.TEST_OR_PROD }}
 
     steps:
       - name: Set Python Version
         id: set-python-version
+        env:
+          PYTHON_BUILD_VERSION: ${{ inputs.PYTHON_BUILD_VERSION }}
         run: |
-          if [ -z "${{ inputs.PYTHON_BUILD_VERSION }}" ]; then
+          if [ -z "$PYTHON_BUILD_VERSION" ]; then
             echo "PYTHON_BUILD_VERSION=${{ env.PYTHON_BUILD_VERSION_DEFAULT }}" >> $GITHUB_OUTPUT
           else
-            echo "PYTHON_BUILD_VERSION=${{ inputs.PYTHON_BUILD_VERSION }}" >> $GITHUB_OUTPUT
+            echo "PYTHON_BUILD_VERSION=$PYTHON_BUILD_VERSION" >> $GITHUB_OUTPUT
           fi
 
       - name: Set Test or Prod
         id: set-test
+        env:
+          TEST_OR_PROD: ${{ inputs.TEST_OR_PROD }}
         run: |
           # IF this is a push to main, publish to test.
           if [ "${{ github.event_name }}" == "push" ] && [ "${{ github.ref_name }}" == "main" ]; then
             echo "TEST_OR_PROD=test" >> $GITHUB_OUTPUT
           else
-            echo "TEST_OR_PROD=${{ inputs.TEST_OR_PROD }}" >> $GITHUB_OUTPUT
+            echo "TEST_OR_PROD=$TEST_OR_PROD" >> $GITHUB_OUTPUT
           fi
+
+      - name: Validate and set REF_TO_CHECKOUT
+        id: validate-ref
+        env:
+          REF_TO_CHECKOUT: ${{ inputs.REF_TO_CHECKOUT }}
+        run: |
+          if [[ -z "$REF_TO_CHECKOUT" ]]; then
+            echo "REF_TO_CHECKOUT is not set, using default: $REF_TO_CHECKOUT_DEFAULT"
+            REF_TO_CHECKOUT=$REF_TO_CHECKOUT_DEFAULT
+          fi
+          echo "Using REF_TO_CHECKOUT: $REF_TO_CHECKOUT"
+          echo "REF_TO_CHECKOUT=$REF_TO_CHECKOUT" >> $GITHUB_OUTPUT
 
   CI:
     name: QC and Tests
-    needs: set-inputs
+    needs: validate-and-set-inputs
     uses: crickets-and-comb/shared/.github/workflows/CI.yml@main
+    with:
+      REF_TO_CHECKOUT: ${{ needs.validate-and-set-inputs.outputs.REF_TO_CHECKOUT }}
     secrets:
       CHECKOUT_SHARED: ${{ secrets.CHECKOUT_SHARED }}
       SAFETY_API_KEY: ${{ secrets.SAFETY_API_KEY }}
 
   build-dist:
     name: Build Dist
-    needs: [CI, set-inputs]
+    needs: [CI, validate-and-set-inputs]
     uses: crickets-and-comb/shared/.github/workflows/build_dist.yml@main
     with:
       DIST_DIR: "dist"
-      PYTHON_BUILD_VERSION: ${{ needs.set-inputs.outputs.PYTHON_BUILD_VERSION }}
+      PYTHON_BUILD_VERSION: ${{ needs.validate-and-set-inputs.outputs.PYTHON_BUILD_VERSION }}
       PYTHON_PACKAGE_DIST_NAME: python-package-distributions
+      REF_TO_CHECKOUT: ${{ needs.validate-and-set-inputs.outputs.REF_TO_CHECKOUT }}
       # Allows a test build locally without uploading.
-      UPLOAD_DIST: ${{ needs.set-inputs.outputs.TEST_OR_PROD == 'test' || needs.set-inputs.outputs.TEST_OR_PROD == 'prod' }}
+      UPLOAD_DIST: ${{ needs.validate-and-set-inputs.outputs.TEST_OR_PROD == 'test' || needs.validate-and-set-inputs.outputs.TEST_OR_PROD == 'prod' }}
     secrets:
       CHECKOUT_SHARED: ${{ secrets.CHECKOUT_SHARED }}
 
   publish-to-testpypi:
     name: Publish to TestPyPI
-    needs: [build-dist, set-inputs]
-    if: ${{ needs.set-inputs.outputs.TEST_OR_PROD == 'test' }}
+    needs: [build-dist, validate-and-set-inputs]
+    if: ${{ needs.validate-and-set-inputs.outputs.TEST_OR_PROD == 'test' }}
     runs-on: ubuntu-latest
     environment:
       name: testpypi
@@ -118,8 +149,8 @@ jobs:
 
   publish-to-pypi:
     name: Publish to PyPi
-    needs: [build-dist, set-inputs]
-    if: ${{ needs.set-inputs.outputs.TEST_OR_PROD == 'prod' }}
+    needs: [build-dist, validate-and-set-inputs]
+    if: ${{ needs.validate-and-set-inputs.outputs.TEST_OR_PROD == 'prod' }}
     runs-on: ubuntu-latest
     environment:
       name: pypi
@@ -141,15 +172,15 @@ jobs:
           verify-metadata: false
 
   github-release:
-    name: Sign Sistribution with Sigstore and Upload to GitHub Release
-    needs: [publish-to-pypi, set-inputs]
+    name: Sign Distribution with Sigstore and Upload to GitHub Release
+    needs: [publish-to-pypi, validate-and-set-inputs]
     uses: crickets-and-comb/shared/.github/workflows/release_to_github.yml@main
     permissions:
       contents: write
       id-token: write
     with:
       DIST_DIR: "dist"
-      PYTHON_BUILD_VERSION: ${{ needs.set-inputs.outputs.PYTHON_BUILD_VERSION }}
+      PYTHON_BUILD_VERSION: ${{ needs.validate-and-set-inputs.outputs.PYTHON_BUILD_VERSION }}
       PYTHON_PACKAGE_DIST_NAME: python-package-distributions
     secrets:
       CHECKOUT_SHARED: ${{ secrets.CHECKOUT_SHARED }}
@@ -190,10 +221,10 @@ jobs:
 
   deploy-docs:
     name: Deploy Docs
-    needs: [publish-to-pypi, set-inputs]
+    needs: [publish-to-pypi, validate-and-set-inputs]
     uses: crickets-and-comb/shared/.github/workflows/deploy_docs.yml@main
     with:
-      PYTHON_BUILD_VERSION: ${{ needs.set-inputs.outputs.PYTHON_BUILD_VERSION }}
+      PYTHON_BUILD_VERSION: ${{ needs.validate-and-set-inputs.outputs.PYTHON_BUILD_VERSION }}
     permissions:
       id-token: write
       contents: write
