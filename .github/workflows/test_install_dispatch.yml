@@ -23,7 +23,7 @@ env:
   CONDA_VERSION: latest
 
 jobs:
-  validat-and-set-inputs:
+  validate-and-set-inputs:
     name: Set Inputs
     runs-on: ubuntu-latest
     outputs:
@@ -57,10 +57,10 @@ jobs:
 
   test-published-package:
     name: Test Published Package on (Test)PyPi
-    needs: validat-and-set-inputs
+    needs: validate-and-set-inputs
     uses: crickets-and-comb/shared/.github/workflows/test_install.yml@main
     with:
-      RELEASE_VERSION: ${{ needs.validat-and-set-inputs.outputs.RELEASE_VERSION }}
-      TEST_OR_PROD: ${{ needs.validat-and-set-inputs.outputs.TEST_OR_PROD }}
+      RELEASE_VERSION: ${{ needs.validate-and-set-inputs.outputs.RELEASE_VERSION }}
+      TEST_OR_PROD: ${{ needs.validate-and-set-inputs.outputs.TEST_OR_PROD }}
     secrets:
       CHECKOUT_SHARED: ${{ secrets.CHECKOUT_SHARED }}
