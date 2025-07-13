@@ -14,7 +14,7 @@ jobs:
   ci-cd:
     needs: close-external-prs
     # TODO: SWITCH BACK TO MAIN.
-    uses: crickets-and-comb/reference_package/.github/workflows/CI_CD.yml@bugfix/KalebCoberly/checkout_PR_ref
+    uses: crickets-and-comb/reference_package/.github/workflows/CI_CD.yml@main
     with:
       TEST_OR_PROD: 'dev'
     secrets:
