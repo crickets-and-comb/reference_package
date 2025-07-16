@@ -13,7 +13,7 @@ jobs:
 
   ci-cd:
     needs: close-external-prs
-    uses: crickets-and-comb/reference_package/.github/workflows/CI_CD.yml@feature/KalebCoberly/try_getting_PR_ref_from_within_shared
+    uses: crickets-and-comb/reference_package/.github/workflows/CI_CD.yml@main
     with:
       TEST_OR_PROD: 'dev'
     secrets:

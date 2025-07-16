@@ -76,7 +76,7 @@ jobs:
 
   CI:
     name: QC and Tests
-    uses: crickets-and-comb/shared/.github/workflows/CI.yml@feature/KalebCoberly/try_getting_PR_ref_from_within_shared
+    uses: crickets-and-comb/shared/.github/workflows/CI.yml@main
     secrets:
       CHECKOUT_SHARED: ${{ secrets.CHECKOUT_SHARED }}
       SAFETY_API_KEY: ${{ secrets.SAFETY_API_KEY }}

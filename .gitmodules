@@ -1,4 +1,4 @@
 [submodule "shared"]
 	path = shared
 	url = https://github.com/crickets-and-comb/shared.git
-	branch = feature/KalebCoberly/try_getting_PR_ref_from_within_shared
+	branch = main
