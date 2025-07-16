@@ -14,11 +14,6 @@ on:
         description: 'Python version to build with. Does not set matrix for QC and testing; just sets version for build jobs.'
         type: string
         default: "3.12"
-      REF_TO_CHECKOUT:
-        description: "The git ref to checkout."
-        required: false
-        default: "refs/heads/main"
-        type: string
       TEST_OR_PROD:
         description: 'Publish to test or prod? Default ("dev") skips publishing except on push to main, which publishes to test.'
         type: string
@@ -26,11 +21,6 @@ on:
 
   workflow_call:
     inputs:
-      REF_TO_CHECKOUT:
-        description: "The git ref to checkout."
-        required: false
-        default: "refs/heads/main"
-        type: string
       TEST_OR_PROD:
         description: 'Publish to test or prod? Default ("dev") skips publishing except on push to main, which publishes to test.'
         type: string
@@ -51,7 +41,6 @@ env:
   CONDA_VERSION: latest
   PACKAGE_TEST_WAIT_TIME: 120
   PYTHON_BUILD_VERSION_DEFAULT: "3.12"
-  REF_TO_CHECKOUT_DEFAULT: "refs/heads/main"
 
 jobs:
   validate-and-set-inputs:
@@ -59,7 +48,6 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       PYTHON_BUILD_VERSION: ${{ steps.set-python-version.outputs.PYTHON_BUILD_VERSION }}
-      REF_TO_CHECKOUT: ${{ steps.validate-ref.outputs.REF_TO_CHECKOUT }}
       TEST_OR_PROD: ${{ steps.set-test.outputs.TEST_OR_PROD }}
 
     steps:
@@ -86,24 +74,9 @@ jobs:
             echo "TEST_OR_PROD=$TEST_OR_PROD" >> $GITHUB_OUTPUT
           fi
 
-      - name: Validate and set REF_TO_CHECKOUT
-        id: validate-ref
-        env:
-          REF_TO_CHECKOUT: ${{ inputs.REF_TO_CHECKOUT }}
-        run: |
-          if [[ -z "$REF_TO_CHECKOUT" ]]; then
-            echo "REF_TO_CHECKOUT is not set, using default: $REF_TO_CHECKOUT_DEFAULT"
-            REF_TO_CHECKOUT=$REF_TO_CHECKOUT_DEFAULT
-          fi
-          echo "Using REF_TO_CHECKOUT: $REF_TO_CHECKOUT"
-          echo "REF_TO_CHECKOUT=$REF_TO_CHECKOUT" >> $GITHUB_OUTPUT
-
   CI:
     name: QC and Tests
-    needs: validate-and-set-inputs
-    uses: crickets-and-comb/shared/.github/workflows/CI.yml@main
-    with:
-      REF_TO_CHECKOUT: ${{ needs.validate-and-set-inputs.outputs.REF_TO_CHECKOUT }}
+    uses: crickets-and-comb/shared/.github/workflows/CI.yml@feature/KalebCoberly/try_getting_PR_ref_from_within_shared
     secrets:
       CHECKOUT_SHARED: ${{ secrets.CHECKOUT_SHARED }}
       SAFETY_API_KEY: ${{ secrets.SAFETY_API_KEY }}
@@ -116,7 +89,6 @@ jobs:
       DIST_DIR: "dist"
       PYTHON_BUILD_VERSION: ${{ needs.validate-and-set-inputs.outputs.PYTHON_BUILD_VERSION }}
       PYTHON_PACKAGE_DIST_NAME: python-package-distributions
-      REF_TO_CHECKOUT: ${{ needs.validate-and-set-inputs.outputs.REF_TO_CHECKOUT }}
       # Allows a test build locally without uploading.
       UPLOAD_DIST: ${{ needs.validate-and-set-inputs.outputs.TEST_OR_PROD == 'test' || needs.validate-and-set-inputs.outputs.TEST_OR_PROD == 'prod' }}
     secrets:
