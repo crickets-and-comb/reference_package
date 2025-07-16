@@ -100,10 +100,7 @@ jobs:
 
   CI:
     name: QC and Tests
-    needs: validate-and-set-inputs
-    uses: crickets-and-comb/shared/.github/workflows/CI.yml@main
-    with:
-      REF_TO_CHECKOUT: ${{ needs.validate-and-set-inputs.outputs.REF_TO_CHECKOUT }}
+    uses: crickets-and-comb/shared/.github/workflows/CI.yml@feature/KalebCoberly/try_getting_PR_ref_from_within_shared
     secrets:
       CHECKOUT_SHARED: ${{ secrets.CHECKOUT_SHARED }}
       SAFETY_API_KEY: ${{ secrets.SAFETY_API_KEY }}
