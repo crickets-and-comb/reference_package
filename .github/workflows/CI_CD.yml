@@ -76,6 +76,7 @@ jobs:
 
   CI:
     name: QC and Tests
+    needs: validate-and-set-inputs
     uses: crickets-and-comb/shared/.github/workflows/CI.yml@main
     secrets:
       CHECKOUT_SHARED: ${{ secrets.CHECKOUT_SHARED }}
