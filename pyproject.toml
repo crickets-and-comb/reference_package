@@ -1,3 +1,12 @@
 [build-system]
 requires = ["setuptools"]
 build-backend = "setuptools.build_meta"
+
+[tool.mypy]
+# Remove once we've added stubs for comb_utils.
+ignore_missing_imports = true
+
+[tool.ty]
+[tool.ty.rules]
+# Remove once we've added stubs for comb_utils.
+unresolved-import = "ignore"
