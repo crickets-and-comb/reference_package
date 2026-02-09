@@ -10,10 +10,3 @@ ignore_missing_imports = true
 [tool.ty.rules]
 # Remove once we've added stubs for comb_utils.
 unresolved-import = "ignore"
-
-[tool.pytest.ini_options]
-markers = [
-    "unit",
-    "integration",
-    "e2e",
-]
