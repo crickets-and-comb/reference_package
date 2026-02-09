@@ -5,10 +5,6 @@ build-backend = "setuptools.build_meta"
 [tool.mypy]
 ignore_missing_imports = true
 
-[tool.ty]
-[tool.ty.rules]
-unresolved-import = "ignore"
-
 [tool.pytest.ini_options]
 markers = [
     "unit",
