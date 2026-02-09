@@ -5,9 +5,9 @@ import pytest
 
 def pytest_collection_modifyitems(config: pytest.Config, items: list[pytest.Item]) -> None:
     """Mark test types."""
-    unit_tests_dir = str(config.rootpath / "tests/unit")
-    integration_tests_dir = str(config.rootpath / "tests/integration")
-    e2e_tests_dir = str(config.rootpath / "tests/e2e")
+    unit_tests_dir = str(config.rootpath / "tests" / "unit")
+    integration_tests_dir = str(config.rootpath / "tests" / "integration")
+    e2e_tests_dir = str(config.rootpath / "tests" / "e2e")
 
     for item in items:
         test_path = str(item.fspath)
