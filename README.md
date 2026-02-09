@@ -158,6 +158,16 @@ When making smaller commits, you might just want to run some of the smaller comm
     $ make clean format full-qc full-test
 ```
 
+#### Type Checking
+
+This project uses the ``mypy`` type checker to ensure code quality. It's the Python industry standard for comprehensive type checking.
+
+To run type checking:
+
+```bash
+    $ make typecheck
+```
+
 ### Workflows: usage and limitations
 
 QC, tests, builds, and deployment run on GitHub on certain events (e.g., pull requests, pushes to main, manual dispatches) using the workflows found in `.github/workflows`.
