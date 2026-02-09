@@ -39,6 +39,24 @@ Performance measured on reference_package codebase (19 Python files):
 - **pytype** has reasonable performance but is deprecated for Python 3.13+
 - **pyright/basedpyright** are slower due to Node.js runtime overhead
 
+**Note on Performance:** Performance can vary significantly between systems. On macOS, mypy may show different performance characteristics compared to Linux. The timings above were measured on Linux x86_64.
+
+### Cache Management
+
+To ensure accurate performance measurements, you may want to clear type checker caches:
+
+- **pytype**: `rm -rf .pytype` (creates `.pytype` directory)
+- **mypy**: `rm -rf .mypy_cache` (creates `.mypy_cache` directory)
+- **pyright**: No persistent cache directory (uses in-memory cache)
+- **basedpyright**: No persistent cache directory (uses in-memory cache)
+- **ty**: No persistent cache directory (uses in-memory cache)
+- **pyrefly**: No persistent cache directory (uses in-memory cache)
+
+The `make clean` target clears pytype cache but not mypy cache. For a complete clean state:
+```bash
+rm -rf .pytype .mypy_cache
+```
+
 ## Feature Comparison
 
 ### Strictness and Error Detection
