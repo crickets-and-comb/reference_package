@@ -5,12 +5,7 @@ REPO_ROOT := $(dir $(abspath $(lastword $(MAKEFILE_LIST))))
 # Typechecker configuration
 # Recommended: Enable mypy (comprehensive) and ty (fast)
 RUN_MYPY := 1
-RUN_TY := 1
-# Optional: Disable slower or redundant checkers for faster CI/CD
-RUN_PYRIGHT := 0
-RUN_BASEDPYRIGHT := 0
-RUN_PYREFLY := 0
-# Note: RUN_PYTYPE is controlled by shared/Makefile based on Python version
+RUN_PYTYPE := 0
 
 export
 include shared/Makefile
