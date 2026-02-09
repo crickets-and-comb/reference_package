@@ -1,0 +1,9 @@
+include = ["src", "tests"]
+pythonVersion = "3.12"
+typeCheckingMode = "basic"
+reportMissingTypeStubs = false
+reportUnusedCallResult = false
+reportUnusedImport = false
+reportPrivateLocalImportUsage = false
+reportUnknownMemberType = false
+reportUnknownArgumentType = false
