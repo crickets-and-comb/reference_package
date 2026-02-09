@@ -160,32 +160,12 @@ When making smaller commits, you might just want to run some of the smaller comm
 
 #### Type Checking
 
-This project uses multiple Python type checkers to ensure code quality. The primary type checkers are:
-
-- **mypy** - Industry standard, comprehensive type checking
-- **ty** - Extremely fast Rust-based checker from the Astral team
-- **pyright** - Microsoft's type checker
-- **basedpyright** - Community fork with additional features
-- **pyrefly** - Meta's production-tested type checker
-- **pytype** - Google's type checker (deprecated for Python 3.13+)
+This project uses the ``mypy`` type checker to ensure code quality. It's the Python industry standard for comprehensive type checking.
 
 To run type checking:
 
 ```bash
     $ make typecheck
-```
-
-For a detailed comparison of type checkers, performance benchmarks, and recommendations, see [docs/TYPECHECKER_COMPARISON.md](docs/TYPECHECKER_COMPARISON.md).
-
-The recommended configuration for optimal CI/CD performance uses `mypy` as the primary checker and `ty` for fast development feedback. You can control which type checkers run by setting variables in the `Makefile`:
-
-```makefile
-RUN_MYPY ?= 1          # Recommended: comprehensive checking
-RUN_TY ?= 1            # Recommended: fast feedback
-RUN_PYRIGHT ?= 0       # Optional
-RUN_BASEDPYRIGHT ?= 0  # Optional
-RUN_PYREFLY ?= 0       # Optional
-RUN_PYTYPE ?= 0        # Deprecated for Python 3.13+
 ```
 
 ### Workflows: usage and limitations
