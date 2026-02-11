@@ -160,7 +160,7 @@ When making smaller commits, you might just want to run some of the smaller comm
 
 #### Type Checking
 
-This project uses the ``mypy`` type checker to ensure code quality. It's the Python industry standard for comprehensive type checking.
+This project uses [mypy](https://mypy-lang.org) for type checking.
 
 To run type checking:
 
