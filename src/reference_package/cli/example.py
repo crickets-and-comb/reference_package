@@ -17,5 +17,5 @@ from reference_package.lib.constants import DocStrings
     "--seconds", type=int, required=False, default=1, help=DocStrings.EXAMPLE.args["seconds"]
 )
 @typechecked
-def main(seconds: int = 1) -> None:  # noqa: D103
+def main(seconds: int) -> None:  # noqa: D103
     example.wait_a_second(seconds=seconds)
