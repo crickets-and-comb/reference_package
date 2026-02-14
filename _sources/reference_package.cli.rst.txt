@@ -9,13 +9,13 @@ reference\_package.cli.example module
 
 .. automodule:: reference_package.cli.example
    :members:
-   :show-inheritance:
    :undoc-members:
+   :show-inheritance:
 
 Module contents
 ---------------
 
 .. automodule:: reference_package.cli
    :members:
-   :show-inheritance:
    :undoc-members:
+   :show-inheritance:

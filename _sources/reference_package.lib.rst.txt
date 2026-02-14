@@ -9,21 +9,21 @@ reference\_package.lib.constants module
 
 .. automodule:: reference_package.lib.constants
    :members:
-   :show-inheritance:
    :undoc-members:
+   :show-inheritance:
 
 reference\_package.lib.example module
 -------------------------------------
 
 .. automodule:: reference_package.lib.example
    :members:
-   :show-inheritance:
    :undoc-members:
+   :show-inheritance:
 
 Module contents
 ---------------
 
 .. automodule:: reference_package.lib
    :members:
-   :show-inheritance:
    :undoc-members:
+   :show-inheritance:
