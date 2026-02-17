@@ -14,7 +14,11 @@ from reference_package.lib.constants import DocStrings
 
 @click.command(help=DocStrings.EXAMPLE.cli_docstring)
 @click.option(
-    "--seconds", type=int, required=False, default=1, help=DocStrings.EXAMPLE.args["seconds"]
+    "--seconds",
+    type=int,
+    required=False,
+    default=DocStrings.EXAMPLE.defaults["seconds"],
+    help=DocStrings.EXAMPLE.args["seconds"],
 )
 @typechecked
 def main(seconds: int) -> None:  # noqa: D103
