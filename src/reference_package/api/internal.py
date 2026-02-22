@@ -12,10 +12,10 @@ from reference_package.lib.constants import DocStrings
 
 
 @typechecked
-def wait_a_second(
+def wait_a_second(  # noqa: D103
     seconds: int = DocStrings.EXAMPLE_INTERNAL.defaults["seconds"],
     extra_string: str = DocStrings.EXAMPLE_INTERNAL.defaults["extra_string"],
-) -> None:  # noqa: D103
+) -> None:
     extra_string = extra_string.upper().strip()
     example.wait_a_second(seconds=seconds, extra_string=extra_string)
 

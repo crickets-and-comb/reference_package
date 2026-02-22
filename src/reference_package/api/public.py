@@ -11,9 +11,9 @@ from reference_package.lib.constants import DocStrings
 
 
 @typechecked
-def wait_a_second(
+def wait_a_second(  # noqa: D103
     seconds: int = DocStrings.EXAMPLE.defaults["seconds"],
-) -> None:  # noqa: D103
+) -> None:
     example.wait_a_second(seconds=seconds)
 
 
