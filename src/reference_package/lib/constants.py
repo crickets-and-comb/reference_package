@@ -14,6 +14,7 @@ class DocStrings:
     Also prints a message with the number you passed.
 """,
         args={"seconds": "How many seconds to wait."},
+        defaults={"seconds": 1},
         raises=[],
         returns=[],
     )
@@ -26,6 +27,10 @@ class DocStrings:
         args={
             "seconds": "How many seconds to wait.",
             "extra_string": "Extra message to add on tail of existing message.",
+        },
+        defaults={
+            "seconds": 1,
+            "extra_string": "",
         },
         raises=[],
         returns=[],
