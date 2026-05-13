@@ -95,35 +95,9 @@ jobs:
     secrets:
       CHECKOUT_SHARED: ${{ secrets.CHECKOUT_SHARED }}
 
-  publish-to-testpypi:
-    name: Publish to TestPyPI
-    needs: [build-dist, validate-and-set-inputs]
-    if: ${{ needs.validate-and-set-inputs.outputs.TEST_OR_PROD == 'test' }}
-    runs-on: ubuntu-latest
-    environment:
-      name: testpypi
-      url: https://test.pypi.org/p/${{ github.repository }}
-    permissions:
-      id-token: write
-
-    steps:
-      - name: Download Dist
-        uses: actions/download-artifact@v4
-        with:
-          name: python-package-distributions
-          path: "dist"
-
-      - name: Publish to TestPyPI
-        uses: pypa/gh-action-pypi-publish@release/v1
-        with:
-          repository-url: https://test.pypi.org/legacy/
-          packages-dir: "dist"
-          verify-metadata: false
-
   publish-to-pypi:
     name: Publish to PyPi
     needs: [build-dist, validate-and-set-inputs]
-    if: ${{ needs.validate-and-set-inputs.outputs.TEST_OR_PROD == 'prod' }}
     runs-on: ubuntu-latest
     environment:
       name: pypi
@@ -139,10 +113,19 @@ jobs:
           path: "dist"
 
       - name: Publish to PyPi
-        uses: pypa/gh-action-pypi-publish@release/v1
-        with:
-          packages-dir: "dist"
-          verify-metadata: false
+        env:
+          TEST_OR_PROD: ${{ needs.validate-and-set-inputs.outputs.TEST_OR_PROD }}
+          DIST_DIR: ${{ env.DIST_DIR }}
+        run: |
+          if [ "${{ env.TEST_OR_PROD }}" = "prod" ]; then \
+            echo "Uploading to PyPI..."; \
+            twine upload --repository pypi ${{ env.DIST_DIR }}*; \
+          elif [ "${{ env.TEST_OR_PROD }}" = "test" ]; then \
+            echo "Uploading to Test PyPI..."; \
+            twine upload --repository testpypi ${{ env.DIST_DIR }}*; \
+          else \
+            echo "TEST_OR_PROD variable not set to 'prod' or 'test'. Skipping upload."; \
+          fi
 
   github-release:
     name: Sign Distribution with Sigstore and Upload to GitHub Release
@@ -157,38 +140,21 @@ jobs:
       PYTHON_PACKAGE_DIST_NAME: python-package-distributions
     secrets:
       CHECKOUT_SHARED: ${{ secrets.CHECKOUT_SHARED }}
-
-  wait-to-test-test:
-    name: Wait for Test Publish to Propagate
-    needs: publish-to-testpypi
-    runs-on: ubuntu-latest
-    steps:
-      - name: Wait
-        run: sleep ${{ env.PACKAGE_TEST_WAIT_TIME }}
   
-  wait-to-test-prod:
-    name: Wait for Prod Publish to Propagate
-    needs: publish-to-pypi
+  wait-to-test-install:
+    name: Wait for Publish to Propagate
+    needs: [publish-to-pypi, validate-and-set-inputs]
     runs-on: ubuntu-latest
     steps:
       - name: Wait
         run: sleep ${{ env.PACKAGE_TEST_WAIT_TIME }}
 
-  test-install-test:
-    name: Test Test Install
-    needs: wait-to-test-test
+  test-install:
+    name: Test Install
+    needs: [wait-to-test-install, validate-and-set-inputs]
     uses: crickets-and-comb/shared/.github/workflows/test_install.yml@main
     with:
-      TEST_OR_PROD: 'test'
-    secrets:
-      CHECKOUT_SHARED: ${{ secrets.CHECKOUT_SHARED }}
-
-  test-install-prod:
-    name: Test Prod Install
-    needs: wait-to-test-prod
-    uses: crickets-and-comb/shared/.github/workflows/test_install.yml@main
-    with:
-      TEST_OR_PROD: 'prod'
+      TEST_OR_PROD: ${{ needs.validate-and-set-inputs.outputs.TEST_OR_PROD }}
     secrets:
       CHECKOUT_SHARED: ${{ secrets.CHECKOUT_SHARED }}
 
