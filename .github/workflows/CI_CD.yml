@@ -40,7 +40,7 @@ defaults:
 env:
   CONDA_VERSION: latest
   PACKAGE_TEST_WAIT_TIME: 120
-  PYTHON_BUILD_VERSION_DEFAULT: "3.12"
+  PYTHON_BUILD_VERSION_DEFAULT: "3.13"
 
 jobs:
   validate-and-set-inputs:
