@@ -16,7 +16,7 @@ This is a [Crickets and Comb](https://cricketsandcomb.org) resource.
     src/reference_package/cli       Command-line-interface.
     src/reference_package/lib       Implementation.
     tests/e2e                       End-to-end tests.
-    test/integration                Integration tests.
+    tests/integration               Integration tests.
     tests/unit                      Unit tests.
 ```
 
@@ -129,7 +129,7 @@ First build and activate the env before installing this package:
 
 ```bash
     $ make build-env
-    $ conda activate reference_package_py3.12
+    $ conda activate reference_package_py3.13
 ```
 
 Note, if you don't have Python installed, you need to pass the package name directly when you build the env: `make build-env PACKAGE_NAME=reference_package`. If you have Python installed (e.g., this conda env already activated), then you don't need to because it uses Python to grab the package name from the `setup.cfg` file.
@@ -142,7 +142,7 @@ Then, install this package and its dev dependencies:
 
 This installs all the dependencies in your conda env site-packages, but the files for this package's installation are now your source files in this repo.
 
-Note: Running `make install` is equivalent to running `make install INSTALL_EXTRAS=[dev]`. If you want to install 
+Note: Running `make install` is equivalent to running `make install INSTALL_EXTRAS=[dev]`. If you want to install only a subset of the extras, pass them explicitly, e.g. `make install INSTALL_EXTRAS=[test]`. See `[options.extras_require]` in `setup.cfg` for the available extras.
 
 ### QC and testing
 
@@ -172,7 +172,7 @@ To run type checking:
 
 QC, tests, builds, and deployment run on GitHub on certain events (e.g., pull requests, pushes to main, manual dispatches) using the workflows found in `.github/workflows`.
 
-The shared workflows (in the shared submodule at `shared/.github/workflows`) are reusable workflows, meaning they can can be called from within other workflows. See https://docs.github.com/en/actions/sharing-automations/reusing-workflows.
+The shared workflows (in the shared submodule at `shared/.github/workflows`) are reusable workflows, meaning they can be called from within other workflows. See https://docs.github.com/en/actions/sharing-automations/reusing-workflows.
 
 See also `.github/workflows/test_install_dispatch.yml` workflow for an example. Here we've wrapped a single reusable workflow in another so we can dispatch it manually from the consuming repo.
 
@@ -186,7 +186,7 @@ Shared workflows are split into different aspects of CI/CD, but they don't cover
 
 Some of the workflows have a `TEST_OR_PROD` parameter. This is to control which aspects run. Some jobs and steps only run on `TEST_OR_PROD=test`, some only on `TEST_OR_PROD=prod`, some only on both, some no matter what. While the parameter defaults to "dev", this value does not enable anything in particular; it's just an unambiguous way to say neither "test" nor "prod". This is useful for avoiding deployment during development. For example, passing "dev" (or not "test" or "prod") skips uploading build artifacts to GitHub for later use, since attempting this locally with the `run-act` make target will fail (see `shared/.github/workflows/build_dist.yml` and `shared/Makefile`).
 
-Int `.github/workflows/CI_CD.yml`, we've set up the CI/CD pipeline to run on all pull requests (PRs), on pushes to main, and on manual dispatch. For pull requests, we only run QC, pre-publishing testing, and building (`TEST_OR_PROD=dev`). We don't want to publish any packages or documentation until the pull request has been approved and merged to main. On pushes to main (approved PRs), we run the same bits as PRs, and if those pass again, we run a test release to TestPyPi followed by a test installation (`TEST_OR_PROD=test`). The manual workflow_dispatch allows you to run from GitHub Actions with any parameters on any branch at any time. For instance, once you see that the test deployment succeeded and you're ready to release to PyPi and publish documentation to GitHub Pages, you then manually dispatch the workflow again with `TEST_OR_PROD=prod`.
+In `.github/workflows/CI_CD.yml`, we've set up the CI/CD pipeline to run on pushes to main, on a weekly schedule, and on manual dispatch. Pull requests (PRs) run it via `.github/workflows/PR_CI_CD.yml`, which first closes PRs from outside the organization and then calls `CI_CD.yml` from `main` with `TEST_OR_PROD=dev`. For pull requests, we only run QC, pre-publishing testing, and building (`TEST_OR_PROD=dev`). We don't want to publish any packages or documentation until the pull request has been approved and merged to main. On pushes to main (approved PRs), we run the same bits as PRs, and if those pass again, we run a test release to TestPyPi followed by a test installation (`TEST_OR_PROD=test`). The manual workflow_dispatch allows you to run from GitHub Actions with any parameters on any branch at any time. For instance, once you see that the test deployment succeeded and you're ready to release to PyPi and publish documentation to GitHub Pages, you then manually dispatch the workflow again with `TEST_OR_PROD=prod`.
 
 #### Developing workflows
 
@@ -244,7 +244,7 @@ It's tricky developing shared workflows, but if you're just developing this pack
 
 The shared workflows run a matrix of Python versions and OS versions. See https://github.com/crickets-and-comb/shared.
 
-While we run installation tests on Ubuntu, macOS, and Windows to ensure published packages work on all three, we run pre-publishing QC only on Ubuntu and macOS. The reason for this is that QC uses our dev tools and we don't yet support dev on Windows. Supporting Windows dev tools may only require a simple set of changes (e.g., conditionally setting filepath syntax), and is a welcome upgrade on the list of TODOs.
+While we run installation tests on Ubuntu, macOS, and Windows to ensure published packages work on all three, we run pre-publishing QC only on Ubuntu. The reason for this is that QC uses our dev tools and we don't yet support dev on Windows. Supporting Windows dev tools may only require a simple set of changes (e.g., conditionally setting filepath syntax), and is a welcome upgrade on the list of TODOs.
 
 We run QC and installation tests on a Python matrix as well (3.13 - 3.14 at time of writing). We set this matrix based on the Scientific Python SPEC 0 support window https://scientific-python.org/specs/spec-0000/#support-window. This support window includes common packages for scientific computing (e.g., `numpy` and `pandas`), and we recommend keeping relevant dependencies pinned within this support window when consuming shared tools.
 
