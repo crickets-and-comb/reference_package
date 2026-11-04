@@ -1,3 +1,13 @@
 [build-system]
 requires = ["setuptools"]
 build-backend = "setuptools.build_meta"
+
+[tool.pytest.ini_options]
+# Markers are applied by directory in tests/conftest.py; registering them here silences
+# PytestUnknownMarkWarning and lets --strict-markers catch typos.
+addopts = "--strict-markers"
+markers = [
+    "unit: fast, isolated tests (tests/unit).",
+    "integration: tests of components working together (tests/integration).",
+    "e2e: end-to-end tests of public entry points (tests/e2e).",
+]

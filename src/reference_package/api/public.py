@@ -6,7 +6,7 @@ separate from a more complex internal API with more options for power users.
 
 from typeguard import typechecked
 
-from reference_package.api.internal import example
+from reference_package.api import internal
 from reference_package.lib.constants import DocStrings
 
 
@@ -14,7 +14,7 @@ from reference_package.lib.constants import DocStrings
 def wait_a_second(  # noqa: D103
     seconds: int = DocStrings.EXAMPLE.defaults["seconds"],
 ) -> None:
-    example.wait_a_second(seconds=seconds)
+    internal.wait_a_second(seconds=seconds)
 
 
 wait_a_second.__doc__ = DocStrings.EXAMPLE.api_docstring
