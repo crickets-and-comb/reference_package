@@ -3,6 +3,7 @@
 import pytest
 from click.testing import CliRunner
 
+import reference_package
 from reference_package.cli import example
 
 
@@ -25,6 +26,11 @@ def test_cli_calls_public_api(
 
     assert result.exit_code == 0, result.output
     assert calls == [{"seconds": expected_seconds}]
+
+
+def test_cli_uses_public_function() -> None:
+    """Test that the function the CLI calls is the public API, not a lib or internal one."""
+    assert example.wait_a_second is reference_package.wait_a_second
 
 
 def test_cli_rejects_non_int_seconds(cli_runner: CliRunner) -> None:
