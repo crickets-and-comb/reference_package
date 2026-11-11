@@ -16,8 +16,11 @@ copyright = config.get("metadata", "copyright")
 extensions = [
     "sphinx.ext.autodoc",
     "sphinx.ext.napoleon",
-    "sphinx_autodoc_typehints",
+    # sphinx_click must load before sphinx_autodoc_typehints. With Sphinx 9, the latter
+    # imports the sphinx.ext.autodoc.mock submodule, which shadows the mock() function that
+    # sphinx_click imports, so `.. click::` fails with "'module' object is not callable".
     "sphinx_click",
+    "sphinx_autodoc_typehints",
 ]
 html_theme = "furo"
 html_context = {"version": version, "display_version": True}
