@@ -8,7 +8,7 @@ __doc__ = """
 import click
 from typeguard import typechecked
 
-from reference_package.lib import example
+from reference_package import wait_a_second
 from reference_package.lib.constants import DocStrings
 
 
@@ -22,4 +22,4 @@ from reference_package.lib.constants import DocStrings
 )
 @typechecked
 def main(seconds: int) -> None:  # noqa: D103
-    example.wait_a_second(seconds=seconds)
+    wait_a_second(seconds=seconds)
